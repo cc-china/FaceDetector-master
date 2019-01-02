@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">api_test</string>
+    <string name="faceOkKey">IREcphe1_eyYwIHxwE19u-IYwxy7wEXf</string>
+    <string name="faceOkSecret">XhaiiGk-1yrkj8EXNUtvJo_e9z4TaS1b</string>
+
+    <string name="faceTestKey">oTaH7pgtZIBn1F2w9jmOe_LUxI2FCZEf</string>
+    <string name="faceTestSecret">dfEJD7_eQf-P613oqS78X_zbElita4Ru</string>
+</resources>
