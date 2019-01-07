@@ -2,19 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/tv_timer"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_centerInParent="true"
-        android:visibility="gone"/>
 
     <SurfaceView
         android:id="@+id/sfv_camera"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginBottom="100dp" />
     <ImageView
         android:id="@+id/iv_bitmap"
         android:layout_width="100dp"
@@ -25,7 +20,18 @@
         android:layout_height="70dp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="70dp"
         android:visibility="gone"
         android:text="拍照"/>
+    <TextView
+        android:id="@+id/tv_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="35dp"
+        android:text=""
+        android:textColor="#000000"
+        android:textSize="17sp"
+        android:visibility="visible"/>
 </RelativeLayout>

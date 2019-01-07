@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Base64;
 
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -12,12 +13,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
- * @author by licheng on 2017/8/8.
+ *
  */
 
 public class BitmapUtil {
+    public static final String path = Environment.getExternalStorageDirectory()
+            .getAbsolutePath() + "/grirms/";
+
 
     //将字符串转换成Bitmap类型
     public static Bitmap stringtoBitmap(String string) {
@@ -117,5 +124,52 @@ public class BitmapUtil {
                 }
             }
         }
+    }
+
+    /**
+     * 从网络获取图片
+     * URL图片下载到本地文件夹
+     */
+    public static boolean getImageStream(String filePath, String fileName) {
+        try {
+            URL url = new URL(filePath);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(10 * 1000);
+            conn.setRequestMethod("GET");
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                byte[] reads = readStream(conn.getInputStream());
+                //二进制图片保存到本地
+                 byte2File(reads, path + fileName);
+                File file = new File(path + fileName);
+                if (file.exists()) {
+//                    SharedPreferencesUtil.getInstance(SoftApplication.context).saveImagePath(path + fileName);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+        } catch (Exception e) {
+        }
+        return false;
+    }
+
+    /**
+     * Get data from stream
+     *
+     * @param inStream
+     * @return byte[]
+     * @throws Exception
+     */
+    public static byte[] readStream(InputStream inStream) throws Exception {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[2048];
+        int len = 0;
+        while ((len = inStream.read(buffer)) != -1) {
+            outStream.write(buffer, 0, len);
+        }
+        outStream.close();
+        inStream.close();
+        return outStream.toByteArray();
     }
 }

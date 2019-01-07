@@ -50,7 +50,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SufaceViewActivity extends Activity implements SurfaceHolder.Callback {
     private Camera camera;
     private ImageView iv_bitmap;
-    private TextView tv_timer;
+    private TextView tv_info;
     private Bitmap bitmap;
     private Button btn_camera;
     private File pathFile;
@@ -85,7 +85,7 @@ public class SufaceViewActivity extends Activity implements SurfaceHolder.Callba
     private void bindID() {
         SurfaceView sfv_camera = findViewById(R.id.sfv_camera);
         iv_bitmap = findViewById(R.id.iv_bitmap);
-        tv_timer = findViewById(R.id.tv_timer);
+        tv_info = findViewById(R.id.tv_info);
         btn_camera = findViewById(R.id.btn_camera);
 
         if (pathFile.exists()) {
