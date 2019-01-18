@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-30:12
-INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-30:12
-INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-30:12
-INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-30:12
+ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-33:12
+INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-33:12
+INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-33:12
+INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-33:12
 MERGED from [com.android.support:appcompat-v7:26.0.0-alpha1] C:\Users\Administrator\.gradle\caches\transforms-1\files-1.1\appcompat-v7-26.0.0-alpha1.aar\3acb4eaf323da42c683c1df142297d35\AndroidManifest.xml:17:1-31:12
 MERGED from [com.jakewharton:butterknife:8.8.1] C:\Users\Administrator\.gradle\caches\transforms-1\files-1.1\butterknife-8.8.1.aar\ccbdc638fd35a3f91f694d551d8092fb\AndroidManifest.xml:2:1-7:12
 MERGED from [com.android.support:animated-vector-drawable:26.0.0-alpha1] C:\Users\Administrator\.gradle\caches\transforms-1\files-1.1\animated-vector-drawable-26.0.0-alpha1.aar\c4ed60d9a46a158bc094f9722812e56c\AndroidManifest.xml:17:1-28:12
@@ -14,20 +14,20 @@ MERGED from [com.android.support:support-fragment:26.0.0-alpha1] C:\Users\Admini
 MERGED from [com.android.support:support-core-utils:26.0.0-alpha1] C:\Users\Administrator\.gradle\caches\transforms-1\files-1.1\support-core-utils-26.0.0-alpha1.aar\9cba3cb046d7f0242ff7429f984601ee\AndroidManifest.xml:17:1-31:12
 MERGED from [com.android.support:support-core-ui:26.0.0-alpha1] C:\Users\Administrator\.gradle\caches\transforms-1\files-1.1\support-core-ui-26.0.0-alpha1.aar\6a594893e782971ce5dcb5f9b37bf947\AndroidManifest.xml:17:1-31:12
 MERGED from [com.android.support:support-compat:26.0.0-alpha1] C:\Users\Administrator\.gradle\caches\transforms-1\files-1.1\support-compat-26.0.0-alpha1.aar\2039c5555a9ca0476ddee695eb72b3db\AndroidManifest.xml:17:1-31:12
-INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-30:12
-INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-30:12
-INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-30:12
+INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-33:12
+INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-33:12
+INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-33:12
 	package
 		ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:3:5-34
 		INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml
 		INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-30:12
+		ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-33:12
 		INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml
 	android:versionCode
 		INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-30:12
+		ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:1-33:12
 		INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:2:11-69
@@ -48,7 +48,7 @@ ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\ma
 	android:name
 		ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:8:22-77
 application
-ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:10:5-28:19
+ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:10:5-31:19
 MERGED from [com.android.support:appcompat-v7:26.0.0-alpha1] C:\Users\Administrator\.gradle\caches\transforms-1\files-1.1\appcompat-v7-26.0.0-alpha1.aar\3acb4eaf323da42c683c1df142297d35\AndroidManifest.xml:29:5-20
 MERGED from [com.android.support:appcompat-v7:26.0.0-alpha1] C:\Users\Administrator\.gradle\caches\transforms-1\files-1.1\appcompat-v7-26.0.0-alpha1.aar\3acb4eaf323da42c683c1df142297d35\AndroidManifest.xml:29:5-20
 MERGED from [com.android.support:animated-vector-drawable:26.0.0-alpha1] C:\Users\Administrator\.gradle\caches\transforms-1\files-1.1\animated-vector-drawable-26.0.0-alpha1.aar\c4ed60d9a46a158bc094f9722812e56c\AndroidManifest.xml:26:5-20
@@ -99,6 +99,10 @@ category#android.intent.category.LAUNCHER
 ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:25:17-77
 	android:name
 		ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:25:27-74
+activity#com.facepp.api.test.test_face_pp.cc.SignInActivity
+ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:28:9-30:20
+	android:name
+		ADDED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml:28:19-65
 uses-sdk
 INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\Administrator\Desktop\face++api\facepp_api-master\app\src\main\AndroidManifest.xml

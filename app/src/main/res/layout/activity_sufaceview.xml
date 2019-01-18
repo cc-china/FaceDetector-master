@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <SurfaceView
@@ -10,28 +10,43 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="100dp" />
+    <com.facepp.api.test.test_face_pp.view.MySufaceView
+        android:id="@+id/find_face"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
     <ImageView
         android:id="@+id/iv_bitmap"
         android:layout_width="100dp"
         android:layout_height="100dp" />
-    <Button
-        android:id="@+id/btn_camera"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_centerHorizontal="true"
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="70dp"
-        android:visibility="gone"
-        android:text="拍照"/>
-    <TextView
-        android:id="@+id/tv_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="35dp"
-        android:text=""
-        android:textColor="#000000"
-        android:textSize="17sp"
-        android:visibility="visible"/>
+        android:background="@color/black1">
+
+        <TextView
+            android:id="@+id/tv_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center_horizontal"
+            android:text="人脸识别,点击按钮开启"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            android:visibility="visible" />
+
+        <com.facepp.api.test.test_face_pp.view.MyButton
+            android:id="@+id/My_btn_camera"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_below="@+id/tv_info"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+
+
 </RelativeLayout>

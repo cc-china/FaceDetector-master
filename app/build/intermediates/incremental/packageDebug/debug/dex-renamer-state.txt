@@ -1,4 +1,4 @@
-#Wed Dec 26 17:17:47 CST 2018
+#Fri Jan 18 15:03:00 CST 2019
 base.0=C\:\\Users\\Administrator\\Desktop\\face++api\\facepp_api-master\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\0
 renamed.0=classes.dex
 file.0=C\:\\Users\\Administrator\\Desktop\\face++api\\facepp_api-master\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\0\\classes.dex

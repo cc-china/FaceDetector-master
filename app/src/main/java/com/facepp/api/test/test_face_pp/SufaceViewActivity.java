@@ -2,11 +2,13 @@ package com.facepp.api.test.test_face_pp;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
+import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -17,56 +19,75 @@ import android.media.FaceDetector;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facepp.api.test.R;
-import com.megvii.facepp.api.FacePPApi;
-import com.megvii.facepp.api.IFacePPCallBack;
+import com.facepp.api.test.test_face_pp.utils.BitmapUtil;
+import com.facepp.api.test.test_face_pp.utils.CameraSetting;
+import com.facepp.api.test.test_face_pp.utils.FaceApiUtils;
+import com.facepp.api.test.test_face_pp.utils.Utils;
+import com.facepp.api.test.test_face_pp.view.MyButton;
 import com.megvii.facepp.api.bean.DetectResponse;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by Administrator on 2018\12\21 0021.
  */
 
-public class SufaceViewActivity extends Activity implements SurfaceHolder.Callback {
+public class SufaceViewActivity extends Activity implements SurfaceHolder.Callback, Camera.PreviewCallback {
     private Camera camera;
     private ImageView iv_bitmap;
     private TextView tv_info;
     private Bitmap bitmap;
-    private Button btn_camera;
     private File pathFile;
     private boolean isContrastFlag;
     private FaceApiUtils faceUtils;
     private Bitmap detectorBitmap;
     private int orientionOfCamera;
+    private Dialog dialog;
+    private MyButton my_btn_camera;
+    private SurfaceView sfv_camera;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sufaceview);
+        init();
+    }
+
+    private void init() {
+        dialog = Utils.showProgressDialog(SufaceViewActivity.this, "正在上传", true);
+        Utils.setLight(SufaceViewActivity.this, 140);
         faceUtils = new FaceApiUtils(SufaceViewActivity.this);
+        //在使用 BitmapUtil.path ---test文件夹之前   你需要判断它是否存在，否的话创建文件夹
+        judgeFolderIsExists();
         pathFile = new File(BitmapUtil.path);
         bindID();
         permission();
+    }
+
+    private void judgeFolderIsExists() {
+        File file = new File(Environment.getExternalStorageDirectory()
+                .getAbsolutePath() + "/test/");
+        if (!file.exists()) {
+            file.mkdir();
+        }
     }
 
     private void permission() {
@@ -83,38 +104,41 @@ public class SufaceViewActivity extends Activity implements SurfaceHolder.Callba
     }
 
     private void bindID() {
-        SurfaceView sfv_camera = findViewById(R.id.sfv_camera);
+        sfv_camera = findViewById(R.id.sfv_camera);
         iv_bitmap = findViewById(R.id.iv_bitmap);
         tv_info = findViewById(R.id.tv_info);
-        btn_camera = findViewById(R.id.btn_camera);
+        my_btn_camera = findViewById(R.id.My_btn_camera);
 
         if (pathFile.exists()) {
-            btn_camera.setVisibility(View.GONE);
             isContrastFlag = true;
         } else {
-            btn_camera.setVisibility(View.VISIBLE);
+            tv_info.setText("自拍上传,人脸头像");
             isContrastFlag = false;
-            btn_camera.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                mLock.lock();
-                                getPreViewImage();
-                            } catch (Exception e) {
-                            } finally {
-                                mLock.unlock();
-                            }
-                        }
-                    }.start();
-                }
-            });
+
         }
         SurfaceHolder surfaceHolder = sfv_camera.getHolder();
         surfaceHolder.addCallback(this);
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);// 設置顯示器類型，setType必须设置
+
+
+        my_btn_camera.setOnClickListener(new MyButton.OnClickListener() {
+            @Override
+            public void onClick(View view, MotionEvent event) {
+                try {
+                    //点击后切换Mybutton背景
+                    my_btn_camera.setMyButtonBackGroupColor_gray();
+                    mLock.lock();
+                    if (camera != null) {
+                        camera.setPreviewCallback(SufaceViewActivity.this);
+                    }
+                } catch (Exception e) {
+                    e.getStackTrace();
+                } finally {
+                    mLock.unlock();
+                }
+
+            }
+        });
 
     }
 
@@ -125,39 +149,31 @@ public class SufaceViewActivity extends Activity implements SurfaceHolder.Callba
      */
     @Override
     public void surfaceCreated(final SurfaceHolder holder) {
-        try {
-            if (camera == null) {
-                camera = Camera.open(1);
-            }
-            camera.setPreviewDisplay(holder);
-            orientionOfCamera = CameraSetting.setCameraDisplayOrientation(
-                    SufaceViewActivity.this,
-                    1, camera);
-            camera.startPreview();
-
-            Camera.Parameters parameters = camera.getParameters();
-
-            //设置相机预览照片帧数
-            parameters.setPreviewFpsRange(1, 2);
-            //设置图片的质量..
-            parameters.set("jpeg-quality", 90);
-            if (isContrastFlag) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            mLock.lock();
-                            getPreViewImage();
-                        } catch (Exception e) {
-                        } finally {
-                            mLock.unlock();
-                        }
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    if (camera == null) {
+                        camera = Camera.open(1);
                     }
-                }.start();
+                    camera.setPreviewDisplay(holder);
+                    orientionOfCamera = CameraSetting.setCameraDisplayOrientation(
+                            SufaceViewActivity.this,
+                            1, camera);
+
+                    Camera.Parameters parameters = camera.getParameters();
+                    //设置相机预览照片帧数
+                    parameters.setPreviewFpsRange(7000, 10000);
+                    //设置图片的质量..
+                    parameters.set("jpeg-quality", 90);
+//                    camera.setParameters(parameters);//相机中的这个属性设置很苛刻，参数不对会报错，请谨慎使用
+                    camera.startPreview();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        }.start();
+
     }
 
     @Override
@@ -183,43 +199,14 @@ public class SufaceViewActivity extends Activity implements SurfaceHolder.Callba
     /**
      * 获取预览图片
      */
-    private boolean isGetObtainImager = true;
+    private volatile boolean isGetObtainImager = true;
     FaceDetector.Face[] faces = new FaceDetector.Face[10];
 
-    private void getPreViewImage() {
-        camera.setPreviewCallback(new Camera.PreviewCallback() {
-            @Override
-            public void onPreviewFrame(byte[] data, Camera camera) {
-                Camera.Size size = camera.getParameters().getPreviewSize();
-                try {
-                    YuvImage image = new YuvImage(data, ImageFormat.NV21, size.width, size.height, null);
-                    if (image != null) {
-                        final ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        image.compressToJpeg(new Rect(0, 0, size.width, size.height),
-                                100, stream);
-                        final Bitmap bmp = BitmapFactory.decodeByteArray(stream.toByteArray(), 0, stream.size());
-                        //android源码中检测人脸的类
-                        if (compareCount >= 2) {
-                            btn_camera.setVisibility(View.VISIBLE);
-                            btn_camera.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    //上传图片，无条件验证成功
-                                }
-                            });
-                        } else {
-                            autoCheckFace(stream, bmp);
-                        }
-                        stream.close();
-                    }
-                } catch (Exception ex) {
-                    Log.e("Sys", "Error:" + ex.getMessage());
-                }
-            }
-        });
-    }
+    private void autoCheckFace(final ByteArrayOutputStream stream, Bitmap bmp) {
+        Message message = Message.obtain();
+        message.obj = "正在获取人脸";
+        mHandler.sendMessage(message);
 
-    private void autoCheckFace(ByteArrayOutputStream stream, Bitmap bmp) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         Bitmap bitmap1 = BitmapFactory.decodeByteArray(stream.toByteArray(), 0, stream.toByteArray().length,
                 options);
@@ -263,54 +250,161 @@ public class SufaceViewActivity extends Activity implements SurfaceHolder.Callba
         Log.e("faceNumber", faceNumber + "");
         if (faceNumber != 0 && isGetObtainImager) {
             isGetObtainImager = false;
-            detectMyBitmap(bitmap2, stream.toByteArray());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    detectMyBitmap(stream.toByteArray());
+                }
+            });
+        } else if (faceNumber == 0) {
+            compareCount++;
+            Message message1 = Message.obtain();
+            message1.obj = "未检测到人脸，请重新识别";
+            mHandler.sendMessage(message1);
+
         }
         bitmap1.recycle();
     }
 
-    public void detectMyBitmap(Bitmap bmp, final byte[] data) { //*****旋转一下
-        //*******显示一下
-        if (bmp != null) {
-            iv_bitmap.setImageBitmap(bmp);
-//            bmp.recycle();
+
+    /**
+     * data ：0--------基础人脸照片存储成功
+     * data ：1--------两张照片比对成功
+     * data ：2--------两次比对人脸照片都失败，跳过人脸判定，直接打卡成功
+     */
+    public void detectMyBitmap(final byte[] data) { //*****旋转一下
+        Message message3 = Message.obtain();
+        message3.obj = "正在检测人脸";
+        mHandler.sendMessage(message3);
+        if (dialog != null) {
+            dialog.show();
         }
-        faceUtils.detectApi(data);
+        if (camera != null) {
+            camera.setPreviewCallback(null);
+            camera.stopPreview();//停掉摄像头的预览
+        }
         faceUtils.detectResult(new FaceApiUtils.DetectResult() {
             @Override
             public void detectResult(DetectResponse detectResponse) {
-                if (detectResponse.getFaces().size() == 0) {
+                if (detectResponse == null
+                        || detectResponse.getFaces() == null
+                        || detectResponse.getFaces().size() == 0) {
+                    Message message4 = Message.obtain();
+                    message4.obj = "未检测到人脸，请重新识别";
+                    mHandler.sendMessage(message4);
+                    dialog.dismiss();
                     isGetObtainImager = true;
+                    compareCount++;
+//                    if (isContrastFlag) {
+                    //开启摄像头的预览
+                    Message message2 = Message.obtain();
+                    message2.what = 2;
+                    mHandler.sendMessage(message2);
+//                    }
                     return;
                 }
                 float threshold = detectResponse.getFaces().get(0).getAttributes().getFacequality().getThreshold();
+
                 if (threshold > 50) {
+                    Message message5 = Message.obtain();
+                    message5.obj = "检测到人脸";
+                    mHandler.sendMessage(message5);
                     if (isContrastFlag) {
                         //有人脸图片，人脸比对
                         saveIamgerFile2location(data);
                     } else {
-                        //无人脸图片，存储人脸图片
-                        BitmapUtil.byte2File(data, BitmapUtil.path);
-                        if (pathFile.exists()) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    recycleCamera();
-                                    Toast.makeText(SufaceViewActivity.this, "存储成功,退出界面", Toast.LENGTH_SHORT).show();
-                                    SufaceViewActivity.this.finish();
-                                }
-                            });
-
-                        }
+                        //无人脸图片，存储人脸图片,先上传到服务器，后存储到本地
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                saveFacePhoto(data, 0);
+                            }
+                        });
                     }
+                } else {
+                    Message message6 = Message.obtain();
+                    message6.obj = "未检测到人脸，请重新识别";
+                    mHandler.sendMessage(message6);
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+                    isGetObtainImager = true;
+                    compareCount++;
+//                    if (isContrastFlag) {
+                    //开启摄像头的预览
+                    Message message2 = Message.obtain();
+                    message2.what = 2;
+                    mHandler.sendMessage(message2);
+//                    }
+                    return;
                 }
             }
         });
+
+        faceUtils.detectApi(data);
+    }
+
+    /**
+     * 1、当人脸比对成功，返回上个Activity成功打卡，考勤打卡图片启用后台Service去上传
+     * <p>
+     * 存储图片,先上传到服务器，后存储到本地
+     */
+    private void saveFacePhoto(final byte[] data, final int type) {
+
+        final String IMAGE_TIME = System.currentTimeMillis() + ".jpg";
+        final String path = BitmapUtil.testPath + IMAGE_TIME;
+        //临时存放照片
+//        BitmapUtil.byte2File(data, path);
+        if (type == 0) {
+            //正式保存照片
+            BitmapUtil.byte2File(data, BitmapUtil.path);
+        }
+        /**
+         * 启用服务上传照片  IMAGE_TIME, path
+         * */
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+//                Intent intent = new Intent(SufaceViewActivity.this, LoadImgService.class);
+//                intent.putExtra("type", type);
+//                intent.putExtra("IMAGE_TIME", IMAGE_TIME);
+//                intent.putExtra("path", path);
+//                startService(intent);
+
+                Intent backIntent = new Intent();
+                //代表存储基础人脸照片
+                backIntent.putExtra("type", type);
+                backIntent.putExtra("imgPath", path);
+                backIntent.putExtra("imgName", IMAGE_TIME);
+                SufaceViewActivity.this.setResult(RESULT_OK, backIntent);
+                SufaceViewActivity.this.finish();
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        //返回上一级
+        recycleCamera();
+        if (type == 0) {
+            BitmapUtil.byte2File(data, path);
+            Message message10 = Message.obtain();
+            message10.what = 10;
+            message10.obj = "人脸信息采集完毕,请开始打卡";
+            mHandler.sendMessage(message10);
+        }
     }
 
     volatile int compareCount = 0;
 
     private void saveIamgerFile2location(final byte[] path1) {
         //已有人脸图片，两张图片进行比对
+        Message message7 = Message.obtain();
+        message7.obj = "正在比对人脸信息";
+        mHandler.sendMessage(message7);
+        if (dialog != null) {
+            dialog.show();
+        }
         faceUtils.FaceContrastTwoImager(BitmapUtil.path, path1);
         faceUtils.setResult(new FaceApiUtils.Result() {
             @Override
@@ -321,18 +415,81 @@ public class SufaceViewActivity extends Activity implements SurfaceHolder.Callba
                         if (value.matches("-?[0-9]+\\.?[0-9]*") &&
                                 Float.parseFloat(value) > 50) {
                             compareCount = 0;
-                            Toast.makeText(SufaceViewActivity.this,
-                                    "验证通过", Toast.LENGTH_SHORT).show();
-                            finish();
+                            Message message8 = Message.obtain();
+                            message8.obj = "人脸识别完成，即将退出";
+                            mHandler.sendMessage(message8);
+                            saveFacePhoto(path1, 1);
                         } else {
+                            if (dialog != null) {
+                                dialog.dismiss();
+                            }
+                            if (camera != null) {
+                                camera.setPreviewCallback(SufaceViewActivity.this);
+                                camera.startPreview();//开启摄像头的预览
+                            }
                             isGetObtainImager = true;
                             compareCount++;
-                            Toast.makeText(SufaceViewActivity.this,
-                                    "打卡失败" + compareCount + "次", Toast.LENGTH_SHORT).show();
+                            Message message9 = Message.obtain();
+                            message9.obj = "打卡失败" + compareCount + "次";
+                            mHandler.sendMessage(message9);
                         }
                     }
                 });
             }
         });
     }
+
+    @Override
+    public void onPreviewFrame(byte[] data, Camera camera) {
+        Camera.Size size = camera.getParameters().getPreviewSize();
+        try {
+            YuvImage image = new YuvImage(data, ImageFormat.NV21, size.width, size.height, null);
+            if (image != null) {
+                final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                image.compressToJpeg(new Rect(0, 0, size.width, size.height),
+                        100, stream);
+                final Bitmap bmp = BitmapFactory.decodeByteArray(stream.toByteArray(), 0, stream.size());
+                if (compareCount >= 2 && isContrastFlag) {
+                    Message message11 = Message.obtain();
+                    message11.what = 11;
+                    message11.obj = "自拍打卡,人事审核";
+                    mHandler.sendMessage(message11);
+                    my_btn_camera.setOnClickListener(new MyButton.OnClickListener() {
+                        @Override
+                        public void onClick(View view, MotionEvent event) {
+                            saveFacePhoto(stream.toByteArray(), 2);
+                        }
+                    });
+                } else {
+                    //android源码中检测人脸的类
+                    autoCheckFace(stream, bmp);
+                }
+                stream.close();
+            }
+        } catch (Exception ex) {
+            Log.e("Sys", "Error:" + ex.getMessage());
+        }
+    }
+
+    Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            String text = (String) msg.obj;
+            if (msg.what == 10) {
+                Toast.makeText(SufaceViewActivity.this, text, Toast.LENGTH_SHORT).show();
+            } else if (msg.what == 2) {
+                if (camera != null) {
+                    camera.setPreviewCallback(SufaceViewActivity.this);
+                    camera.startPreview();//开启摄像头的预览
+                }
+            } else if (msg.what == 11) {
+                tv_info.setText(text + "");
+                tv_info.setTextColor(Color.RED);
+                my_btn_camera.setMyButtonBackGroupColor_while();
+            } else {
+                tv_info.setText(text + "");
+            }
+            return false;
+        }
+    });
 }

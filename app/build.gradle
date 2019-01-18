@@ -40,4 +40,5 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     // compile project(':lib')
     compile files('libs/lib-facepp_api.jar')
+    implementation files('libs/Msc.jar')
 }

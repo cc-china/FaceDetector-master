@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import com.facepp.api.test.test_face_pp.utils.BitmapUtil;
 import com.megvii.facepp.api.FacePPApi;
 import com.megvii.facepp.api.IFacePPCallBack;
 import com.megvii.facepp.api.bean.CompareResponse;
